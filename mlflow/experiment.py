@@ -1,13 +1,26 @@
 import os
-import pandas as pd
-import mlflow
-from sklearn.linear_model import LinearRegression
-from sklearn.model_selection import train_test_split
+import logging
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
 
 def run_experiment(data_path: str):
+    try:
+        import pandas as pd
+        import mlflow
+        from sklearn.linear_model import LinearRegression
+        from sklearn.model_selection import train_test_split
+    except ImportError as e:
+        logger.warning(f"Missing dependency for experiment: {e}")
+        return
+
     # simple regression on aggregated data
-    df = pd.read_parquet(data_path)
+    try:
+        df = pd.read_parquet(data_path)
+    except Exception as e:
+        logger.warning(f"Could not read parquet data: {e}")
+        return
 
     X = df[["revenue"]].values
     y = df[["revenue"]].values  # dummy target
@@ -23,7 +36,7 @@ def run_experiment(data_path: str):
         mlflow.log_metric("r2", score)
         mlflow.sklearn.log_model(model, "model")
 
-        print(f"Logged model with r2={score}")
+        logger.info(f"Logged model with r2={score}")
 
 
 if __name__ == "__main__":

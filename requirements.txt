@@ -3,17 +3,20 @@
 # core
 pyspark>=3.3
 mlflow>=2.7
-great_expectations>=1.17
+great_expectations>=0.15
 fastapi>=0.100
 uvicorn>=0.23
 streamlit>=1.30
 PyGithub>=1.58
 GitPython>=3.1
 pytest>=7.0
+requests>=2.28
 
 # utilities
-pandas>=2.2
-numpy>=1.25
-pydantic>=2.4
+pandas>=2.0
+numpy>=1.24
+pydantic>=2.0
+scikit-learn>=1.0
 
-# Terraform and infra are separate; no Python deps
+# CSV support
+opencsv>=5.0
