@@ -40,3 +40,4 @@ if __name__ == "__main__":
 
 # added transformation 'add discount'%
 # added transformation 'filter low quantity'%
+# added transformation 'log revenue'%
