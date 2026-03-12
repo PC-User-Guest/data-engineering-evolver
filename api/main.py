@@ -52,3 +52,7 @@ def predict(req: PredictRequest):
         logger.error(f"Prediction error: {e}")
         raise HTTPException(status_code=500, detail="Prediction failed")
 
+
+@app.get('/status')
+def status():
+    return {'status': 'ok'}
