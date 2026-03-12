@@ -55,3 +55,7 @@ def predict(req: PredictRequest, model=Depends(get_model)):
 @app.get("/status")
 def status():
     return {"status": "ok"}
+
+@app.get('/status')
+def status():
+    return {'status': 'ok'}
