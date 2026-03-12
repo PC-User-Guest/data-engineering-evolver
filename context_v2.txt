@@ -1,0 +1,247 @@
+Core Idea
+The Data Engineering Project Evolver is an automated system that maintains a GitHub repository with daily, realistic contributions across a modern Data Engineering stack. Its dual purpose is to (1) produce consistent GitHub-tracked activity (commits, pull requests, merges) and (2) serve as a high‑quality, educational portfolio project that demonstrates proficiency in Python, Java, SQL, PySpark, MLflow, Great Expectations, FastAPI, Streamlit, and Terraform.
+
+The repository simulates a living data platform for a fictional e‑commerce company. It ingests daily sales data (synthetic or from a public API), processes it with PySpark, validates data quality with Great Expectations, trains a forecasting model tracked by MLflow, exposes predictions via a FastAPI service, and visualizes insights in a Streamlit dashboard. Infrastructure is defined in Terraform (using the Docker provider for local development). A Java component generates simulated event streams.
+
+Automation is handled by a Python orchestration script triggered daily via GitHub Actions. The script creates multiple feature branches, commits meaningful enhancements (e.g., adding a new PySpark transformation, updating a Great Expectations suite, modifying the Streamlit layout), opens pull requests, and merges them—generating between 6 and 12 GitHub‑tracked activities per day. The entire system operates at zero cost, relying only on open‑source tools and free tiers.
+
+System Architecture
+The architecture consists of the following components:
+
+GitHub Repository – Hosts all code, configuration, and automation scripts. Contains well‑organized subdirectories for each technology.
+
+GitHub Actions Workflow – Scheduled via cron to run the automation job daily (or multiple times per day). The workflow checks out the repository, sets up the required environments (Python, Java, Spark), and executes the orchestration script.
+
+Orchestration Script (Python) – Core automation logic. It:
+
+Reads a state file to determine which pending enhancements to implement.
+
+Generates code changes using templates or by applying predefined modifications.
+
+Uses GitPython to create branches, commit changes, and push.
+
+Uses PyGithub to open pull requests and (optionally) merge them automatically.
+
+Project Codebase – Structured as follows:
+
+text
+.
+├── .github/workflows/          # GitHub Actions workflow
+├── data_pipelines/             # PySpark ETL jobs (Python)
+├── java_generator/              # Java data generator (Maven/Gradle)
+├── sql_models/                  # SQL transformations (e.g., dbt-style models)
+├── quality/                      # Great Expectations suites and checks
+├── mlflow/                       # MLflow experiments, models, tracking
+├── api/                          # FastAPI application
+├── dashboard/                    # Streamlit dashboard
+├── infra/                        # Terraform configurations (Docker provider)
+├── scripts/                      # Orchestration and utility scripts
+├── tests/                        # Unit and integration tests
+├── state/                        # JSON file tracking completed tasks
+└── requirements.txt              # Python dependencies
+Data Source – A small synthetic dataset (e.g., CSV) generated daily by the Java component or a Python script. Stored in the repository or fetched from a public API (e.g., a free weather API). The dataset evolves over time, driving changes in pipelines and validations.
+
+Data Flow:
+
+The Java generator produces a new data file (e.g., data/2025-03-12/sales.csv) when run.
+
+PySpark jobs read the latest data, perform transformations, and output aggregates.
+
+Great Expectations validates the data against expectations defined in the quality/ directory.
+
+MLflow trains a simple model on the aggregated data and logs parameters/metrics.
+
+FastAPI serves model predictions via REST endpoints.
+
+Streamlit reads the aggregates and predictions to display dashboards.
+
+Terraform defines local Docker containers (Postgres, Spark, etc.) to run these services in a unified environment.
+
+All changes are driven by the orchestration script, which updates files in these directories to simulate ongoing development.
+
+Activity Generation Strategy
+The system produces 6–12 GitHub‑tracked activities per day through a combination of commits, pull requests, and merges. The orchestration script runs once per day (or twice for higher volume) and performs the following steps:
+
+Select Tasks – From a predefined backlog (a JSON file in state/backlog.json), pick 2–4 pending enhancements. Each enhancement corresponds to a specific technology area (e.g., "Add new PySpark aggregation", "Update Great Expectations suite for new column", "Add endpoint to FastAPI", etc.). The backlog is initially populated with 30–50 tasks and can be extended manually over time.
+
+Create Feature Branches – For each selected task, create a separate branch named feature/<task-id>-<short-description>.
+
+Generate Changes – For each branch:
+
+Apply a change script (e.g., scripts/generate_pyspark_change.py) that modifies or adds files in the relevant directory.
+
+The change is meaningful: it might add a new transformation function, extend a SQL view, add a validation expectation, or tweak a Terraform resource. Changes are based on templates but incorporate realistic variation (e.g., different column names, parameters, etc.).
+
+Commit the changes with a descriptive message (e.g., "feat: add weekly sales aggregation to PySpark job").
+
+Optionally, make a second commit (e.g., updating tests or documentation) to increase commit count.
+
+Open Pull Requests – Push the branch and use the GitHub API to open a PR against main. The PR description explains the change. If the repository has CI checks (e.g., running tests), they will execute.
+
+Merge PRs – After a short delay (or immediately if auto-merge is enabled), merge the PR. This generates a merge commit.
+
+Repeat – For each selected task, repeat steps 2–5. With 2–4 tasks per day and 2–3 commits per branch, plus the merges, the total activities range from 6 to 12.
+
+Example Daily Output:
+
+Task 1: Add a new PySpark transformation (2 commits) → PR opened → merged → 4 activities.
+
+Task 2: Update Great Expectations suite (1 commit) → PR opened → merged → 3 activities.
+
+Task 3: Add a new FastAPI endpoint (2 commits) → PR opened → merged → 4 activities.
+
+Total: 11 activities.
+
+Activities are distributed throughout the day by scheduling the workflow at multiple times (e.g., 8:00, 14:00, 20:00 UTC) or by introducing delays between branches within a single run.
+
+Scheduling and Automation
+Scheduling Mechanism: GitHub Actions workflow with a cron trigger. Example schedule:
+
+yaml
+on:
+  schedule:
+    - cron: '0 8,14,20 * * *'   # Runs at 8:00, 14:00, 20:00 UTC daily
+Workflow Steps:
+
+Checkout repository.
+
+Set up Python 3.10, Java 11, and Apache Spark (using actions/setup-python, actions/setup-java, and a custom step to download Spark).
+
+Install Python dependencies (pip install -r requirements.txt).
+
+Run the orchestration script: python scripts/orchestrate.py.
+
+(Optional) Run tests to validate changes before committing (though changes are generated with tests in mind).
+
+The orchestration script uses environment variables for GitHub token (GH_TOKEN) and other secrets. It leverages:
+
+git commands via subprocess or GitPython for local operations.
+
+PyGithub to interact with the GitHub API (create PRs, merge).
+
+Timing Strategy: The script can be configured to create branches and PRs sequentially, with pauses to simulate human working patterns. It also respects GitHub API rate limits by checking remaining quota and backing off.
+
+Repository Content Strategy
+The repository evolves like a real data platform, with each commit adding incremental value. The content strategy ensures that all required technologies are meaningfully integrated:
+
+Python – Core automation scripts, utility modules, and test harnesses.
+
+Java – A simple data generator (e.g., using java.util.Random to produce CSV records). Built with Maven/Gradle, included as a subproject.
+
+SQL – Transformation models stored as .sql files, possibly mimicking dbt structure. Used by PySpark (via Spark SQL) or for documentation.
+
+PySpark – ETL jobs that read from the data directory, perform aggregations, and write results to Parquet. Jobs are parameterized (date, input path) and can be run locally.
+
+MLflow – Experiment tracking: a Python script trains a small model (e.g., linear regression) on the aggregated data, logs parameters/metrics, and registers the model. The MLflow run data is stored in the mlruns/ directory (which is .gitignored except for a sample). The orchestration script may commit a metadata file summarizing the latest run.
+
+Great Expectations – A suite of expectations defined in JSON or YAML. The orchestration script can add a new expectation (e.g., expect_column_values_to_not_be_null) or modify an existing one based on data changes.
+
+FastAPI – A simple REST API with endpoints like /predict and /health. The orchestration script can add new endpoints or update the prediction logic.
+
+Streamlit – A dashboard displaying key metrics, charts, and model performance. Changes may include adding a new chart or filter.
+
+Terraform – HCL files defining local Docker containers (Postgres, Spark master, MinIO for storage). The orchestration script can add a new service (e.g., Redis) or modify resource configurations.
+
+Evolution Pattern: Over time, the project becomes more sophisticated. For example:
+
+Week 1: Basic ETL pipeline with PySpark and SQL.
+
+Week 2: Add Great Expectations validation.
+
+Week 3: Integrate MLflow for experiment tracking.
+
+Week 4: Build FastAPI and Streamlit frontends.
+
+Week 5: Define infrastructure with Terraform.
+
+Week 6: Enhance Java generator to produce more realistic data.
+
+The backlog of tasks guides this evolution, ensuring that each day’s contributions are coherent and progressive.
+
+Security Guardrails and Risk Mitigation
+Credential Security
+GitHub Token: Stored as a repository secret (GH_TOKEN) with minimal scopes (repo). Accessed in GitHub Actions via ${{ secrets.GH_TOKEN }}.
+
+Environment Variables: The orchestration script reads the token from os.environ['GH_TOKEN'] and never logs it. Secrets are not hardcoded.
+
+Local Development: Developers use their own tokens via .env files (excluded from git via .gitignore).
+
+Repository Protection
+Branch Protection Rules: main branch is protected: requires pull request reviews before merging, and status checks must pass. However, for automation, we can either:
+
+Use a bot account with bypass permissions (not recommended) or
+
+Temporarily disable protection during the automation run (via API) – risky.
+
+Better: Use a separate branch for automation (e.g., develop) that merges into main via PRs that are auto‑approved by a trusted actor. We can set up a GitHub Actions workflow that auto‑merges PRs from a specific bot user after checks pass. This requires careful configuration.
+
+Prevent Automation Loops: The orchestration script checks a state file (state/completed_tasks.json) to avoid redoing tasks. It also ensures that it does not commit changes to the workflow file itself, which could cause infinite recursion.
+
+Dependency Security
+Dependabot: Enabled on the repository to automatically create PRs for vulnerable dependencies.
+
+Code Scanning: GitHub CodeQL enabled for Python, Java, and JavaScript to detect security issues.
+
+SBOM: Generate a software bill of materials using pip-audit or cyclonedx (optional).
+
+Automation Safety
+Rate Limiting: The script checks GitHub API rate limits and sleeps if necessary. It also implements exponential backoff on failures.
+
+Validation Before Commit: Each change is tested locally (e.g., run PySpark job on a tiny dataset, start FastAPI server, etc.) before committing. The orchestration script can call pytest or run smoke tests.
+
+Idempotency: The script is idempotent – if it fails midway, re‑running will not duplicate tasks because the state file is updated only after successful merge.
+
+Infrastructure Security
+Terraform Safety: Terraform configurations are for local Docker only, so no cloud credentials are needed. State is stored locally (not committed). If using remote state, it would be in a free backend like Terraform Cloud (free for up to 5 users) but we avoid that to stay zero‑cost.
+
+Simulation: We run terraform plan to validate configurations but do not apply them automatically. The orchestration script may update the HCL files and commit them after validation.
+
+Monitoring and Incident Detection
+Logging: The orchestration script logs all actions to a file (logs/automation.log) that is committed periodically (or accessible via GitHub Actions logs).
+
+Alerts: If the script fails (e.g., cannot push branch, API error), the GitHub Actions run fails and sends an email notification (GitHub provides notifications on failure).
+
+Health Checks: A simple status badge in the README shows the last successful run.
+
+Supervision and Monitoring
+Despite running autonomously, the system can be supervised through:
+
+GitHub Actions Dashboard: View workflow runs, logs, and success/failure status.
+
+Activity Feed: The GitHub repository’s Insights page shows commit history, PR activity, and contribution graphs.
+
+Automation Logs: The orchestration script writes structured logs (JSON) to a file that can be viewed in the Actions artifacts or committed to a logs/ branch.
+
+Streamlit Dashboard: A simple admin dashboard (separate from the main dashboard) that reads the state file and shows:
+
+Last run time
+
+Tasks completed today
+
+Pending tasks
+
+GitHub API rate limit status
+This dashboard can be deployed on Streamlit Community Cloud (free) and secured with a password (via secrets).
+
+Notifications: GitHub Actions can send Slack/Discord webhooks on failure, but we keep it simple with email.
+
+Zero-Cost Implementation
+All components are free and open-source:
+
+GitHub: Free tier with unlimited public repositories, GitHub Actions (2000 min/month), Dependabot, CodeQL.
+
+Programming Languages: Python, Java (OpenJDK), SQL (any).
+
+Data Engineering Tools: PySpark (local mode), MLflow (local), Great Expectations (local).
+
+Web Frameworks: FastAPI, Streamlit (both local or on free hosting like Streamlit Community Cloud for the dashboard).
+
+Infrastructure as Code: Terraform (open-source) with Docker provider – runs locally.
+
+Data Storage: Local files or free APIs (e.g., OpenWeatherMap free tier) for data ingestion.
+
+CI/CD: GitHub Actions only.
+
+No Cloud Services: Everything runs on the GitHub Actions runner (2-core, 7 GB RAM) which is sufficient for small jobs. The Java generator and Spark jobs are lightweight.
+
+The only potential cost would be if we exceed GitHub Actions minutes, but with 3 runs per day of ~10 minutes each, that’s 900 minutes/month – well within the 2000 free minutes.

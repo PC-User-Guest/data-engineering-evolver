@@ -1,0 +1,19 @@
+# Python dependencies for Data Engineering Project Evolver
+
+# core
+pyspark>=3.3
+mlflow>=2.7
+great_expectations>=1.17
+fastapi>=0.100
+uvicorn>=0.23
+streamlit>=1.30
+PyGithub>=1.58
+GitPython>=3.1
+pytest>=7.0
+
+# utilities
+pandas>=2.2
+numpy>=1.25
+pydantic>=2.4
+
+# Terraform and infra are separate; no Python deps

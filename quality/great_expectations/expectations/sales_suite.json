@@ -1,0 +1,23 @@
+{
+  "meta": {
+    "great_expectations_version": "1.17.0",
+    "notes": "Basic suite for sales data"
+  },
+  "expectations": [
+    {
+      "expectation_type": "expect_table_columns_to_match_ordered_list",
+      "kwargs": {
+        "column_list": [
+          "date",
+          "product_id",
+          "product_name",
+          "category",
+          "quantity",
+          "unit_price",
+          "total_amount"
+        ]
+      }
+    }
+  ],
+  "data_asset_type": null
+}
