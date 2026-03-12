@@ -30,8 +30,6 @@
     "branch_name": "ge-new-expectation",
     "completed_at": "2026-03-12T09:36:09.785289",
     "branch": "feature/4"
-<<<<<<< Updated upstream
-=======
   },
   {
     "id": "5",
@@ -48,6 +46,5 @@
     "branch_name": "streamlit-revenue-chart",
     "completed_at": "2026-03-12T11:53:15.584010",
     "branch": "feature/6"
->>>>>>> Stashed changes
   }
 ]

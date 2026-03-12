@@ -31,3 +31,5 @@ if st.button("Predict"):
         st.write(resp.json())
     except Exception as e:
         st.error(f"API request failed: {e}")
+
+# added new chart placeholder
