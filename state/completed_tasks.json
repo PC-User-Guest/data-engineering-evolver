@@ -4,7 +4,15 @@
     "description": "Add error handling to orchestrate.py",
     "type": "python",
     "branch_name": "orchestrate-error-handling",
-    "completed_at": "2026-03-12T04:55:29.886538",
+    "completed_at": "2026-03-12T05:02:35.859193",
     "branch": "feature/1"
+  },
+  {
+    "id": "2",
+    "description": "Refactor PySpark ETL to use config file",
+    "type": "pyspark",
+    "branch_name": "etl-config",
+    "completed_at": "2026-03-12T05:02:36.624300",
+    "branch": "feature/2"
   }
 ]
