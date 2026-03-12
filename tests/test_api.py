@@ -2,6 +2,7 @@ import os
 import sys
 import pytest
 
+# Add parent directory to path for module imports
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 try:
@@ -13,38 +14,38 @@ except ImportError:
 
 
 class DummyModel:
+    """Simple dummy model for testing /predict."""
     def predict(self, X):
         return [[x[0] * 2] for x in X]
 
 
 @pytest.mark.skipif(not FASTAPI_AVAILABLE, reason="FastAPI unavailable")
 def test_predict_success():
-    # Override the dependency
-    def override_model():
-        return DummyModel()
+    """Test /predict endpoint with a valid model."""
+    # Override the dependency to use DummyModel
+    main.app.dependency_overrides[main.get_model] = lambda: DummyModel()
 
-    main.app.dependency_overrides[main.get_model] = override_model
-
-    client = TestClient(main.app, lifespan=None)
+    client = TestClient(main.app)
     response = client.post("/predict", json={"revenue": 10})
 
     assert response.status_code == 200
     assert response.json()["prediction"] == 20
 
-    # Clean up overrides
+    # Clear overrides to avoid side effects
     main.app.dependency_overrides.clear()
 
 
 @pytest.mark.skipif(not FASTAPI_AVAILABLE, reason="FastAPI unavailable")
 def test_predict_no_model():
-    # Override the dependency to raise 503
-    def override_model():
+    """Test /predict endpoint when model is not available."""
+    # Override the dependency to simulate no model
+    def raise_no_model():
         from fastapi import HTTPException
         raise HTTPException(status_code=503, detail="Model not available")
 
-    main.app.dependency_overrides[main.get_model] = override_model
+    main.app.dependency_overrides[main.get_model] = raise_no_model
 
-    client = TestClient(main.app, lifespan=None)
+    client = TestClient(main.app)
     response = client.post("/predict", json={"revenue": 10})
 
     assert response.status_code == 503
@@ -55,7 +56,9 @@ def test_predict_no_model():
 
 @pytest.mark.skipif(not FASTAPI_AVAILABLE, reason="FastAPI unavailable")
 def test_status_endpoint():
-    client = TestClient(main.app, lifespan=None)
+    """Test /status endpoint."""
+    client = TestClient(main.app)
     response = client.get("/status")
+
     assert response.status_code == 200
     assert response.json() == {"status": "ok"}
