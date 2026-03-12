@@ -46,3 +46,5 @@ resource "docker_container" "redis" {
   name  = "de_redis"
   networks_advanced = [{ name = docker_network.de.name }]
 }
+
+# added redis resource placeholder

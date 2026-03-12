@@ -30,5 +30,24 @@
     "branch_name": "ge-new-expectation",
     "completed_at": "2026-03-12T09:36:09.785289",
     "branch": "feature/4"
+<<<<<<< Updated upstream
+=======
+  },
+  {
+    "id": "5",
+    "description": "Implement /status endpoint in FastAPI",
+    "type": "fastapi",
+    "branch_name": "api-status-endpoint",
+    "completed_at": "2026-03-12T11:53:13.108047",
+    "branch": "feature/5"
+  },
+  {
+    "id": "6",
+    "description": "Add a revenue by category chart in Streamlit",
+    "type": "streamlit",
+    "branch_name": "streamlit-revenue-chart",
+    "completed_at": "2026-03-12T11:53:15.584010",
+    "branch": "feature/6"
+>>>>>>> Stashed changes
   }
 ]
