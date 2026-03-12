@@ -15,11 +15,12 @@ from typing import Dict, List, Any
 # Git and GitHub imports
 try:
     import git
-    from github import Github
+    from github import Github, Auth
     from github.GithubException import RateLimitExceededException
 except ImportError:
     git = None
     Github = None
+    Auth = None
     RateLimitExceededException = Exception
 
 # Configure logging
@@ -46,7 +47,7 @@ class Orchestrator:
             logger.warning("GH_TOKEN not set - GitHub operations will be mocked")
             self.github = None
         else:
-            self.github = Github(self.github_token)
+            self.github = Github(auth=Auth.Token(self.github_token))
 
         # Initialize git repo
         try:
@@ -133,6 +134,11 @@ class Orchestrator:
             return branch_name
 
         try:
+            # Stash any uncommitted changes before switching branches
+            if self.repo.is_dirty():
+                logger.info("Stashing uncommitted changes")
+                self.repo.git.stash('push', '-m', 'Auto-stash before branch switch')
+
             # Ensure we're on main before creating new branch
             if self.repo.active_branch.name != 'main':
                 self.repo.heads.main.checkout()
@@ -144,6 +150,13 @@ class Orchestrator:
             else:
                 new_branch = self.repo.create_head(branch_name)
                 new_branch.checkout()
+
+            # Restore stashed changes if any
+            try:
+                self.repo.git.stash('pop')
+                logger.info("Restored stashed changes")
+            except:
+                logger.info("No stashed changes to restore")
 
             # Add and commit changes (assuming changes were made by generator)
             if self.repo.is_dirty():
@@ -203,13 +216,8 @@ class Orchestrator:
 
             logger.info(f"PR created: {pr.html_url}")
             
-            # Optionally auto-merge after a short delay
-            time.sleep(2)
-            try:
-                pr.merge(merge_method="squash")
-                logger.info(f"PR #{pr.number} merged")
-            except Exception as e:
-                logger.warning(f"Could not auto-merge: {e}")
+            # Note: Auto-merge disabled for GitHub Actions security restrictions
+            # PRs will need to be merged manually or via different workflow
             
             return True
 
