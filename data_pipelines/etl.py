@@ -39,6 +39,10 @@ if __name__ == "__main__":
     run_etl(input_path, output_path)
 
 # added transformation 'add discount'%
+<<<<<<< feature/1
+# added transformation 'filter low quantity'%
+# added transformation 'log revenue'%
+=======
 <<<<<<< Updated upstream
 # added transformation 'filter low quantity'%
 =======
@@ -50,3 +54,4 @@ if __name__ == "__main__":
 # added transformation 'filter low quantity'%
 # added transformation 'add discount'%
 >>>>>>> Stashed changes
+>>>>>>> main
