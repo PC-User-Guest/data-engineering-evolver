@@ -1,11 +1,11 @@
-from fastapi import FastAPI, HTTPException, Depends
-from pydantic import BaseModel
 import os
 import logging
-import mlflow
 from contextlib import asynccontextmanager
+from fastapi import FastAPI, HTTPException, Depends
+from pydantic import BaseModel
+import mlflow
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
 # Module-level model variable
@@ -24,8 +24,11 @@ async def load_model_on_startup():
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    """Lifespan context manager for startup/shutdown."""
+    # Startup
     await load_model_on_startup()
     yield
+    # Shutdown
     logger.info("Shutting down")
 
 app = FastAPI(title="Sales Prediction API", lifespan=lifespan)
@@ -33,7 +36,7 @@ app = FastAPI(title="Sales Prediction API", lifespan=lifespan)
 class PredictRequest(BaseModel):
     revenue: float
 
-# Dependency to get the model
+# Dependency function
 def get_model():
     if model is None:
         raise HTTPException(status_code=503, detail="Model not available")
@@ -41,6 +44,7 @@ def get_model():
 
 @app.post("/predict")
 def predict(req: PredictRequest, model=Depends(get_model)):
+    """Predict endpoint using injected model."""
     try:
         pred = model.predict([[req.revenue]])
         return {"prediction": float(pred[0][0])}
