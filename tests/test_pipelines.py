@@ -1,7 +1,11 @@
 import os
+import sys
 import tempfile
 import pandas as pd
 import pytest
+
+# Add parent directory to path for module imports
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 # if pyspark can't be imported, skip these tests (CI may not install it)
 try:
