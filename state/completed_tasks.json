@@ -14,8 +14,6 @@
     "branch_name": "etl-config",
     "completed_at": "2026-03-12T05:02:36.624300",
     "branch": "feature/2"
-<<<<<<< Updated upstream
-=======
   },
   {
     "id": "3",
@@ -32,6 +30,5 @@
     "branch_name": "ge-new-expectation",
     "completed_at": "2026-03-12T09:36:09.785289",
     "branch": "feature/4"
->>>>>>> Stashed changes
   }
 ]
