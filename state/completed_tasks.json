@@ -38,5 +38,13 @@
     "branch_name": "api-status-endpoint",
     "completed_at": "2026-03-12T11:53:13.108047",
     "branch": "feature/5"
+  },
+  {
+    "id": "6",
+    "description": "Add a revenue by category chart in Streamlit",
+    "type": "streamlit",
+    "branch_name": "streamlit-revenue-chart",
+    "completed_at": "2026-03-12T11:53:15.584010",
+    "branch": "feature/6"
   }
 ]
