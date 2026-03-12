@@ -37,3 +37,9 @@ if __name__ == "__main__":
     input_path = os.environ.get("ETL_INPUT", "data/sample_sales.csv")
     output_path = os.environ.get("ETL_OUTPUT", "data/output_parquet")
     run_etl(input_path, output_path)
+<<<<<<< Updated upstream
+=======
+
+# added transformation 'add discount'%
+# added transformation 'add discount'%
+>>>>>>> Stashed changes
