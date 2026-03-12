@@ -1,9 +1,18 @@
 import os
 import tempfile
 import pandas as pd
+import pytest
+
+# if pyspark can't be imported, skip these tests (CI may not install it)
+try:
+    import pyspark
+except ImportError:
+    pyspark = None
+
 from data_pipelines import etl
 
 
+@pytest.mark.skipif(pyspark is None, reason="PySpark unavailable")
 def test_run_etl_creates_output(tmp_path):
     # create small sample CSV
     sample = pd.DataFrame({
@@ -25,6 +34,7 @@ def test_run_etl_creates_output(tmp_path):
     assert files, "No parquet files produced"
 
 
+@pytest.mark.skipif(pyspark is None, reason="PySpark unavailable")
 def test_run_etl_handles_missing_columns(tmp_path):
     # CSV missing some columns should not crash
     sample = pd.DataFrame({
