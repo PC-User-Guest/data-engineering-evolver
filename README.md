@@ -214,23 +214,118 @@ GitHub Schedule (cron) → orchestrate.yml workflow
 
 ## Troubleshooting
 
-### CI Workflow Fails
+### Python Environment Issues
+
+**`ModuleNotFoundError: No module named 'data_pipelines'` or `'api'`**
+- **Cause**: Package `__init__.py` files missing or Python path not configured
+- **Solution**:
+  ```bash
+  # Ensure all package directories have __init__.py
+  touch data_pipelines/__init__.py
+  touch api/__init__.py
+  touch dashboard/__init__.py
+  touch mlflow/__init__.py
+  touch quality/__init__.py
+  
+  # Or run pytest from repo root:
+  cd /path/to/data-engineering-evolver
+  pytest -q
+  ```
+
+### FastAPI & Testing Issues
+
+**`RuntimeError: The starlette.testclient module requires the httpx package`**
+- **Cause**: httpx dependency missing (required by FastAPI test client)
+- **Solution**:
+  ```bash
+  pip install httpx
+  # Or reinstall requirements:
+  pip install -r requirements.txt --force-reinstall
+  ```
+
+**`AttributeError: <module 'api.main'> has no attribute 'model'`**
+- **Cause**: Global `model` variable not declared at module level in api/main.py
+- **Solution**: Model is now declared globally at startup; ensure your api/main.py has `model = None` at module level
+
+### Dependency & Version Issues
+
+**Pandas/NumPy version conflicts**
+- **Solution**: Use compatible versions as specified in requirements.txt
+  ```bash
+  pip install pandas>=2.0 numpy>=1.24 scikit-learn>=1.0
+  ```
+
+### CI/CD Workflow Issues
+
+**CI Workflow Fails**
 - Check the GitHub Actions logs: https://github.com/your-repo/actions
 - Common issues:
-  - Missing `GH_TOKEN` secret (set in GitHub Settings > Secrets)
-  - PySpark/MLflow not installed (tests skip automatically)
+  - Missing `GH_TOKEN` secret (set in GitHub Settings > Secrets > New repository secret)
+  - PySpark/MLflow not installed (tests skip automatically if unavailable)
   - Branch conflicts (resolved with force push in orchestration)
 
-### Orchestration Doesn't Generate Activity
+**Orchestration Doesn't Generate Activity**
 - Manually trigger: GitHub UI → Actions → Daily Automation → Run Workflow
-- Check logs: Look for `orchestrate.log` in the repository
-- Ensure `state/backlog.json` contains tasks
-- Verify `GH_TOKEN` is set and valid
+- Check logs: Your repository will output `orchestrate.log` (download from Actions artifacts)
+- Ensure `state/backlog.json` contains tasks (verify with `git log` to see state changes)
+- Verify `GH_TOKEN` is set and valid (test with: `curl -H "Authorization: token $GH_TOKEN" https://api.github.com/user`)
 
-### Local Testing Issues
-- Ensure Python 3.11+ is installed: `python --version`
-- Use a virtual environment to avoid conflicts: `python -m venv venv && source venv/bin/activate`
-- Force reinstall dependencies: `pip install -r requirements.txt --force-reinstall`
+### Local Execution Issues
+
+**`PySpark not available` warnings in tests**
+- **Expected behavior**: Tests skip gracefully if PySpark isn't installed
+- **Solution**: Install PySpark if needed
+  ```bash
+  pip install pyspark>=3.3
+  ```
+
+**Port already in use when starting services**
+- **FastAPI**:
+  ```bash
+  uvicorn api.main:app --port 8001  # Use different port
+  ```
+- **Streamlit**:
+  ```bash
+  streamlit run dashboard/app.py --server.port 8502
+  ```
+- **Terraform Docker containers**:
+  ```bash
+  docker ps  # List containers
+  docker stop container_name  # Stop conflicting containers
+  ```
+
+### Terraform Issues
+
+**`terraform init` requires Docker provider configuration**
+- Ensure Docker is installed and running
+- For Windows/WSL2:
+  ```bash
+  # Verify docker socket
+  ls /var/run/docker.sock  # Linux
+  # On Windows with Docker Desktop, Docker should be running
+  ```
+
+**"docker provider not supported" error**
+- Verify Terraform version compatibility (requires v0.13+):
+  ```bash
+  terraform version
+  ```
+
+### General Debugging
+
+**Enable verbose logging**
+- Orchestration script:
+  ```bash
+  tail -f orchestrate.log
+  ```
+- Tests with more detail:
+  ```bash
+  pytest -vv --tb=long
+  ```
+- Terraform:
+  ```bash
+  TF_LOG=DEBUG terraform apply
+  ```
 
 ## Contributing
 
