@@ -1,16 +1,15 @@
+from fastapi import FastAPI, HTTPException, Depends
+from pydantic import BaseModel
 import os
 import logging
-from contextlib import asynccontextmanager
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
 import mlflow
+from contextlib import asynccontextmanager
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-# Global model variable (initially None, loaded at startup)
+# Module-level model variable
 model = None
-
 
 async def load_model_on_startup():
     """Load MLflow model at startup."""
@@ -23,28 +22,25 @@ async def load_model_on_startup():
         logger.error(f"Failed to load model: {e}")
         model = None
 
-
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Lifespan context manager for startup/shutdown."""
-    # Startup
     await load_model_on_startup()
     yield
-    # Shutdown
     logger.info("Shutting down")
 
-
 app = FastAPI(title="Sales Prediction API", lifespan=lifespan)
-
 
 class PredictRequest(BaseModel):
     revenue: float
 
-
-@app.post("/predict")
-def predict(req: PredictRequest):
+# Dependency to get the model
+def get_model():
     if model is None:
         raise HTTPException(status_code=503, detail="Model not available")
+    return model
+
+@app.post("/predict")
+def predict(req: PredictRequest, model=Depends(get_model)):
     try:
         pred = model.predict([[req.revenue]])
         return {"prediction": float(pred[0][0])}
@@ -52,7 +48,6 @@ def predict(req: PredictRequest):
         logger.error(f"Prediction error: {e}")
         raise HTTPException(status_code=500, detail="Prediction failed")
 
-
-@app.get('/status')
+@app.get("/status")
 def status():
-    return {'status': 'ok'}
+    return {"status": "ok"}
