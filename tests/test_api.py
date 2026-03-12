@@ -21,20 +21,27 @@ class DummyModel:
 
 
 @pytest.mark.skipif(not FASTAPI_AVAILABLE, reason="FastAPI unavailable")
-def test_predict_success(monkeypatch):
-    # replace global model with dummy
-    monkeypatch.setattr(main, "model", DummyModel())
-    
-    client = TestClient(main.app)
-    response = client.post("/predict", json={"revenue": 10})
-    assert response.status_code == 200
-    assert response.json()["prediction"] == 20
+def test_predict_success():
+    # Create a fresh app instance with the test model
+    original_model = main.model
+    try:
+        main.model = DummyModel()
+        client = TestClient(main.app)
+        response = client.post("/predict", json={"revenue": 10})
+        assert response.status_code == 200
+        assert response.json()["prediction"] == 20
+    finally:
+        main.model = original_model
 
 
 @pytest.mark.skipif(not FASTAPI_AVAILABLE, reason="FastAPI unavailable")
-def test_predict_no_model(monkeypatch):
-    monkeypatch.setattr(main, "model", None)
-    
-    client = TestClient(main.app)
-    response = client.post("/predict", json={"revenue": 10})
-    assert response.status_code == 503
+def test_predict_no_model():
+    original_model = main.model
+    try:
+        main.model = None
+        client = TestClient(main.app)
+        response = client.post("/predict", json={"revenue": 10})
+        assert response.status_code == 503
+    finally:
+        main.model = original_model
+
