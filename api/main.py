@@ -24,7 +24,7 @@ async def load_model_on_startup():
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Lifespan context manager for startup/shutdown."""
+    """Startup and shutdown lifespan manager."""
     # Startup
     await load_model_on_startup()
     yield
@@ -36,7 +36,7 @@ app = FastAPI(title="Sales Prediction API", lifespan=lifespan)
 class PredictRequest(BaseModel):
     revenue: float
 
-# Dependency function
+# Dependency to get the current model
 def get_model():
     if model is None:
         raise HTTPException(status_code=503, detail="Model not available")
