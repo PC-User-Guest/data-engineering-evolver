@@ -41,4 +41,10 @@ if __name__ == "__main__":
 # added transformation 'log revenue'
 # added transformation 'add discount'
 
+<<<<<<< Updated upstream
 # added transformation 'add discount'%
+=======
+# added transformation 'add discount'%
+# added transformation 'filter low quantity'%
+# added transformation 'filter low quantity'%
+>>>>>>> Stashed changes
