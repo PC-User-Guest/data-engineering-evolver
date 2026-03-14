@@ -78,8 +78,6 @@
     "branch_name": "sample-data-script",
     "completed_at": "2026-03-14T02:05:11.436068",
     "branch": "feature/10"
-<<<<<<< Updated upstream
-=======
   },
   {
     "id": "11",
@@ -96,6 +94,5 @@
     "branch_name": "api-model-path",
     "completed_at": "2026-03-14T09:39:59.929043",
     "branch": "feature/12"
->>>>>>> Stashed changes
   }
 ]
