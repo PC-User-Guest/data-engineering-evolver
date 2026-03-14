@@ -86,5 +86,13 @@
     "branch_name": "mlflow-logging",
     "completed_at": "2026-03-14T09:39:57.543965",
     "branch": "feature/11"
+  },
+  {
+    "id": "12",
+    "description": "Parameterize API model path via environment",
+    "type": "fastapi",
+    "branch_name": "api-model-path",
+    "completed_at": "2026-03-14T09:39:59.929043",
+    "branch": "feature/12"
   }
 ]
