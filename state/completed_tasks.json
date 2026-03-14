@@ -78,5 +78,13 @@
     "branch_name": "sample-data-script",
     "completed_at": "2026-03-14T02:05:11.436068",
     "branch": "feature/10"
+  },
+  {
+    "id": "11",
+    "description": "Improve logging in mlflow experiment",
+    "type": "mlflow",
+    "branch_name": "mlflow-logging",
+    "completed_at": "2026-03-14T09:39:57.543965",
+    "branch": "feature/11"
   }
 ]
