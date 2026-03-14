@@ -62,8 +62,6 @@
     "branch_name": "readme-update",
     "completed_at": "2026-03-13T02:07:41.066568",
     "branch": "feature/8"
-<<<<<<< Updated upstream
-=======
   },
   {
     "id": "9",
@@ -80,6 +78,5 @@
     "branch_name": "sample-data-script",
     "completed_at": "2026-03-14T02:05:11.436068",
     "branch": "feature/10"
->>>>>>> Stashed changes
   }
 ]
