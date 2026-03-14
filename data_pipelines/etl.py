@@ -40,14 +40,3 @@ if __name__ == "__main__":
 # added transformation 'filter low quantity'
 # added transformation 'log revenue'
 # added transformation 'add discount'
-<<<<<<< Updated upstream
-=======
-<<<<<<< Updated upstream
-=======
-
-# added transformation 'filter low quantity'%
-# added transformation 'log revenue'%
->>>>>>> Stashed changes
-
-# added transformation 'filter low quantity'%
->>>>>>> Stashed changes
