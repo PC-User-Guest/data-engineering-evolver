@@ -94,8 +94,6 @@
     "branch_name": "api-model-path",
     "completed_at": "2026-03-14T09:39:59.929043",
     "branch": "feature/12"
-<<<<<<< Updated upstream
-=======
   },
   {
     "id": "13",
@@ -112,6 +110,5 @@
     "branch_name": "terraform-ignore",
     "completed_at": "2026-03-15T02:30:16.286102",
     "branch": "feature/14"
->>>>>>> Stashed changes
   }
 ]
