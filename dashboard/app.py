@@ -33,3 +33,5 @@ if st.button("Predict"):
         st.error(f"API request failed: {e}")
 
 # added new chart placeholder
+
+# added new chart placeholder
