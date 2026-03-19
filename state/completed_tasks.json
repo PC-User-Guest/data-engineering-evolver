@@ -132,7 +132,17 @@
     "description": "Refactor etl to separate transformations",
     "type": "pyspark",
     "branch_name": "etl-refactor",
-    "completed_at": "2026-03-17T02:10:17.879025",
+    "completed_at": "2026-03-19T02:23:11.334369",
     "branch": "feature/17"
+  },
+  {
+    "id": "18",
+    "description": "Add CLI to DataGenerator",
+    "type": "java",
+    "branch_name": "java-cli",
+    "completed_at": "2026-03-19T02:23:12.127614",
+    "branch": "feature/18"
+    "completed_at": "2026-03-17T02:10:17.879025",
+    "branch": "feature/18"
   }
 ]

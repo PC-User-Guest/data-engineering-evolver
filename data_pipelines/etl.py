@@ -82,3 +82,14 @@ def run_etl(input_path: str, output_path: str) -> None:
 # added transformation 'log revenue'%
     finally:
         spark.stop()
+<<<<<<< Updated upstream
+=======
+<<<<<<< Updated upstream
+=======
+
+# added transformation 'filter low quantity'%
+# added transformation 'filter low quantity'%
+>>>>>>> Stashed changes
+
+# added transformation 'log revenue'%
+>>>>>>> Stashed changes
