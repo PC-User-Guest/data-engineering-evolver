@@ -126,5 +126,24 @@
     "branch_name": "streamlit-cache",
     "completed_at": "2026-03-16T02:31:21.806616",
     "branch": "feature/16"
+<<<<<<< Updated upstream
+=======
+  },
+  {
+    "id": "17",
+    "description": "Refactor etl to separate transformations",
+    "type": "pyspark",
+    "branch_name": "etl-refactor",
+    "completed_at": "2026-03-19T02:23:11.334369",
+    "branch": "feature/17"
+  },
+  {
+    "id": "18",
+    "description": "Add CLI to DataGenerator",
+    "type": "java",
+    "branch_name": "java-cli",
+    "completed_at": "2026-03-19T02:23:12.127614",
+    "branch": "feature/18"
+>>>>>>> Stashed changes
   }
 ]
