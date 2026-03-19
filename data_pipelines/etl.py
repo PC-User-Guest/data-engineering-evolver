@@ -6,46 +6,79 @@ logger = logging.getLogger(__name__)
 
 
 def run_etl(input_path: str, output_path: str) -> None:
-    """Run a simple PySpark ETL job: read CSV, aggregate, write Parquet."""
     try:
         from pyspark.sql import SparkSession
-        from pyspark.sql.functions import col, expr
+        from pyspark.sql.functions import col, expr, when, log1p
     except ImportError:
         logger.warning("PySpark not available - skipping ETL")
         return
 
     spark = SparkSession.builder.appName("sales-etl").getOrCreate()
 
-    logger.info(f"Reading data from {input_path}")
-    df = spark.read.option("header", "true").csv(input_path)
+    try:
+        # -------------------------
+        # Extract
+        # -------------------------
+        logger.info(f"Reading data from {input_path}")
+        df = spark.read.option("header", "true").csv(input_path)
 
-    # Basic transformation: cast numeric types and compute total
-    df = df.withColumn("quantity", col("quantity").cast("int"))
-    df = df.withColumn("unit_price", col("unit_price").cast("double"))
-    df = df.withColumn("total_amount", expr("quantity * unit_price"))
+        # -------------------------
+        # Validate schema (basic)
+        # -------------------------
+        required_cols = ["quantity", "unit_price", "category"]
+        missing = [c for c in required_cols if c not in df.columns]
+        if missing:
+            raise ValueError(f"Missing required columns: {missing}")
 
-    # Aggregate by category
-    agg = df.groupBy("category").sum("total_amount").withColumnRenamed("sum(total_amount)", "revenue")
+        # -------------------------
+        # Transform
+        # -------------------------
 
-    logger.info(f"Writing aggregated data to {output_path}")
-    agg.write.mode("overwrite").parquet(output_path)
+        # Cast types
+        df = df.withColumn("quantity", col("quantity").cast("int"))
+        df = df.withColumn("unit_price", col("unit_price").cast("double"))
 
-    spark.stop()
+        # Filter low quantity (e.g., remove <= 0)
+        df = df.filter(col("quantity") > 0)
 
+        # Add discount logic (example: 10% off if quantity >= 10)
+        df = df.withColumn(
+            "discount",
+            when(col("quantity") >= 10, col("unit_price") * 0.1).otherwise(0.0)
+        )
 
-if __name__ == "__main__":
-    input_path = os.environ.get("ETL_INPUT", "data/sample_sales.csv")
-    output_path = os.environ.get("ETL_OUTPUT", "data/output_parquet")
-    run_etl(input_path, output_path)
-# added transformation 'filter low quantity'
-# added transformation 'log revenue'
-# added transformation 'add discount'
+        # Compute total with discount applied
+        df = df.withColumn(
+            "total_amount",
+            (col("quantity") * (col("unit_price") - col("discount")))
+        )
+
+        # Log revenue (log transform for analytics)
+        df = df.withColumn("log_revenue", log1p(col("total_amount")))
+
+        # -------------------------
+        # Aggregate
+        # -------------------------
+        agg = (
+            df.groupBy("category")
+              .sum("total_amount")
+              .withColumnRenamed("sum(total_amount)", "revenue")
+        )
+
+        # Log aggregated results
+        logger.info("Sample aggregated data:")
+        agg.show(5)
+
+        # -------------------------
+        # Load
+        # -------------------------
+        logger.info(f"Writing aggregated data to {output_path}")
+        agg.write.mode("overwrite").parquet(output_path)
+
+    except Exception as e:
+        logger.error(f"ETL failed: {e}", exc_info=True)
+        raise
 
 # added transformation 'log revenue'%
-# added transformation 'log revenue'%
-<<<<<<< Updated upstream
-=======
-# added transformation 'log revenue'%
-# added transformation 'log revenue'%
->>>>>>> Stashed changes
-# added transformation 'log revenue'%
+    finally:
+        spark.stop()
