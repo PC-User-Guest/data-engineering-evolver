@@ -93,3 +93,5 @@ def run_etl(input_path: str, output_path: str) -> None:
 
 # added transformation 'log revenue'%
 >>>>>>> Stashed changes
+
+# added transformation 'add discount'%
