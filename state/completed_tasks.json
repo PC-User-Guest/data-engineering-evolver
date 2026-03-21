@@ -6,5 +6,145 @@
     "branch_name": "orchestrate-error-handling",
     "completed_at": "2026-03-20T02:08:56.037411",
     "branch": "feature/1"
+  },
+  {
+    "id": "2",
+    "description": "Refactor PySpark ETL to use config file",
+    "type": "pyspark",
+    "branch_name": "etl-config",
+    "completed_at": "2026-03-12T05:02:36.624300",
+    "branch": "feature/2"
+  },
+  {
+    "id": "3",
+    "description": "Improve DataGenerator output format",
+    "type": "java",
+    "branch_name": "java-generator-format",
+    "completed_at": "2026-03-12T09:36:07.464197",
+    "branch": "feature/3"
+  },
+  {
+    "id": "4",
+    "description": "Add a new Great Expectations expectation",
+    "type": "great-expectations",
+    "branch_name": "ge-new-expectation",
+    "completed_at": "2026-03-12T09:36:09.785289",
+    "branch": "feature/4"
+  },
+  {
+    "id": "5",
+    "description": "Implement /status endpoint in FastAPI",
+    "type": "fastapi",
+    "branch_name": "api-status-endpoint",
+    "completed_at": "2026-03-12T11:53:13.108047",
+    "branch": "feature/5"
+  },
+  {
+    "id": "6",
+    "description": "Add a revenue by category chart in Streamlit",
+    "type": "streamlit",
+    "branch_name": "streamlit-revenue-chart",
+    "completed_at": "2026-03-12T11:53:15.584010",
+    "branch": "feature/6"
+  },
+  {
+    "id": "7",
+    "description": "Add Redis service to Terraform",
+    "type": "terraform",
+    "branch_name": "terraform-redis",
+    "completed_at": "2026-03-13T02:07:38.667776",
+    "branch": "feature/7"
+  },
+  {
+    "id": "8",
+    "description": "Update README with setup instructions",
+    "type": "documentation",
+    "branch_name": "readme-update",
+    "completed_at": "2026-03-13T02:07:41.066568",
+    "branch": "feature/8"
+  },
+  {
+    "id": "9",
+    "description": "Write pytest for etl.run_etl",
+    "type": "testing",
+    "branch_name": "test-etl",
+    "completed_at": "2026-03-14T02:05:08.922868",
+    "branch": "feature/9"
+  },
+  {
+    "id": "10",
+    "description": "Add sample data generator script",
+    "type": "python",
+    "branch_name": "sample-data-script",
+    "completed_at": "2026-03-14T02:05:11.436068",
+    "branch": "feature/10"
+  },
+  {
+    "id": "11",
+    "description": "Improve logging in mlflow experiment",
+    "type": "mlflow",
+    "branch_name": "mlflow-logging",
+    "completed_at": "2026-03-14T09:39:57.543965",
+    "branch": "feature/11"
+  },
+  {
+    "id": "12",
+    "description": "Parameterize API model path via environment",
+    "type": "fastapi",
+    "branch_name": "api-model-path",
+    "completed_at": "2026-03-14T09:39:59.929043",
+    "branch": "feature/12"
+  },
+  {
+    "id": "13",
+    "description": "Add Pandas dependency upgrade",
+    "type": "python",
+    "branch_name": "deps-pandas",
+    "completed_at": "2026-03-15T02:30:13.764887",
+    "branch": "feature/13"
+  },
+  {
+    "id": "14",
+    "description": "Add Docker ignore in Terraform",
+    "type": "terraform",
+    "branch_name": "terraform-ignore",
+    "completed_at": "2026-03-15T02:30:16.286102",
+    "branch": "feature/14"
+  },
+  {
+    "id": "15",
+    "description": "Create test for FastAPI /predict",
+    "type": "testing",
+    "branch_name": "test-api",
+    "completed_at": "2026-03-16T02:31:19.712100",
+    "branch": "feature/15"
+  },
+  {
+    "id": "16",
+    "description": "Add caching to Streamlit data loader",
+    "type": "streamlit",
+    "branch_name": "streamlit-cache",
+    "completed_at": "2026-03-16T02:31:21.806616",
+    "branch": "feature/16"
+  },
+  {
+    "id": "17",
+    "description": "Refactor etl to separate transformations",
+    "type": "pyspark",
+    "branch_name": "etl-refactor",
+    "completed_at": "2026-03-19T02:23:11.334369",
+    "branch": "feature/17"
+  },
+  {
+    "id": "18",
+    "description": "Add CLI to DataGenerator",
+    "type": "java",
+    "branch_name": "java-cli",
+    "completed_at": "2026-03-19T02:23:12.127614",
+    "branch": "feature/18"
+    "completed_at": "2026-03-17T02:10:17.879025",
+    "branch": "feature/18"
+    "completed_at": "2026-03-20T02:08:58.111435",
+    "branch": "feature/18"
   }
 ]
