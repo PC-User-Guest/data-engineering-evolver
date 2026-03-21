@@ -22,5 +22,13 @@
     "branch_name": "java-generator-format",
     "completed_at": "2026-03-21T01:42:23.421037",
     "branch": "feature/3"
+  },
+  {
+    "id": "4",
+    "description": "Add a new Great Expectations expectation",
+    "type": "great-expectations",
+    "branch_name": "ge-new-expectation",
+    "completed_at": "2026-03-21T02:02:56.534578",
+    "branch": "feature/4"
   }
 ]
