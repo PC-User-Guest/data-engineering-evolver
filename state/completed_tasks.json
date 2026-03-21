@@ -12,6 +12,7 @@
     "description": "Refactor PySpark ETL to use config file",
     "type": "pyspark",
     "branch_name": "etl-config",
+<<<<<<< Updated upstream
     "completed_at": "2026-03-12T05:02:36.624300",
     "branch": "feature/2"
   },
@@ -144,5 +145,9 @@
     "branch": "feature/18"
     "completed_at": "2026-03-17T02:10:17.879025",
     "branch": "feature/18"
+=======
+    "completed_at": "2026-03-20T02:08:58.111435",
+    "branch": "feature/2"
+>>>>>>> Stashed changes
   }
 ]
