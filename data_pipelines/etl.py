@@ -78,7 +78,10 @@ def run_etl(input_path: str, output_path: str) -> None:
     except Exception as e:
         logger.error(f"ETL failed: {e}", exc_info=True)
         raise
-
-# added transformation 'log revenue'%
     finally:
         spark.stop()
+
+if __name__ == "__main__":
+    import sys
+    run_etl(sys.argv[1], sys.argv[2])
+
