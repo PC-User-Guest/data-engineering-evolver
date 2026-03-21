@@ -44,4 +44,4 @@ jobs:
 
       - name: Push changes
         run: |
-          git push -f origin HEAD
+          git checkout main && git push origin main

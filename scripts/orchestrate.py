@@ -36,7 +36,7 @@ logger = logging.getLogger(__name__)
 
 class Orchestrator:
     def __init__(self, repo_path: str = "."):
-        self.repo_path = Path(repo_path)
+        self.repo_path = Path(repo_path).absolute()
         self.state_dir = self.repo_path / "state"
         self.backlog_file = self.state_dir / "backlog.json"
         self.completed_file = self.state_dir / "completed_tasks.json"
@@ -65,6 +65,8 @@ class Orchestrator:
                 return json.load(f)
         except json.JSONDecodeError as e:
             logger.error(f"Failed to parse {file_path}: {e}")
+            # Try to recover if it's a known corruption pattern (like missing commas or double content)
+            # For now, return empty list to avoid crash, but in real scenario we might want more robust recovery
             return []
 
     def save_state(self, file_path: Path, data: List[Dict[str, Any]]) -> None:
@@ -77,13 +79,13 @@ class Orchestrator:
         """Get tasks that haven't been completed yet."""
         backlog = self.load_state(self.backlog_file)
         completed = self.load_state(self.completed_file)
-        completed_ids = {task['id'] for task in completed}
-        return [task for task in backlog if task['id'] not in completed_ids]
+        completed_ids = {str(task['id']) for task in completed}
+        return [task for task in backlog if str(task['id']) not in completed_ids]
 
     def select_tasks_for_today(self) -> List[Dict[str, Any]]:
         """Select tasks to work on today (placeholder logic)."""
         pending = self.get_pending_tasks()
-        # For now, return up to 3 random tasks
+        # Return up to 3 pending tasks
         return pending[:3] if pending else []
 
     def generate_changes(self, task: Dict[str, Any]) -> bool:
@@ -91,6 +93,12 @@ class Orchestrator:
         logger.info(f"Generating changes for task {task['id']}: {task['description']}")
         
         try:
+            # Ensure scripts directory is in path
+            import sys
+            scripts_dir = str(self.repo_path / "scripts")
+            if scripts_dir not in sys.path:
+                sys.path.append(scripts_dir)
+
             from generate_changes import (
                 generate_pyspark_change,
                 generate_ge_change,
@@ -107,7 +115,7 @@ class Orchestrator:
         try:
             if "pyspark" in task_type or "etl" in task_type:
                 generate_pyspark_change()
-            elif "ge" in task_type or "expectation" in task_type:
+            elif "ge" in task_type or "expectation" in task_type or "great-expectations" in task_type:
                 generate_ge_change()
             elif "fastapi" in task_type or "api" in task_type:
                 generate_fastapi_change()
@@ -124,65 +132,6 @@ class Orchestrator:
             logger.error(f"Error generating changes: {e}")
             return False
 
-    def create_branch_and_commit(self, task: Dict[str, Any]) -> str:
-        """Create a branch and commit changes."""
-        branch_name = f"feature/{task['id'].replace('.', '-')}"
-        logger.info(f"Creating branch {branch_name} for task {task['id']}")
-
-        if not self.repo:
-            logger.warning("Git repo not available - returning branch name only")
-            return branch_name
-
-        try:
-            # Stash any uncommitted changes before switching branches
-            if self.repo.is_dirty():
-                logger.info("Stashing uncommitted changes")
-                self.repo.git.stash('push', '-m', 'Auto-stash before branch switch')
-
-            # Ensure we're on main before creating new branch
-            if self.repo.active_branch.name != 'main':
-                self.repo.heads.main.checkout()
-
-            # Create and checkout new branch
-            if branch_name in [h.name for h in self.repo.heads]:
-                logger.info(f"Branch {branch_name} already exists, checking out")
-                self.repo.heads[branch_name].checkout()
-            else:
-                new_branch = self.repo.create_head(branch_name)
-                new_branch.checkout()
-
-            # Restore stashed changes if any
-            try:
-                self.repo.git.stash('pop')
-                logger.info("Restored stashed changes")
-            except:
-                logger.info("No stashed changes to restore")
-
-            # Add and commit changes (assuming changes were made by generator)
-            if self.repo.is_dirty():
-                self.repo.git.add(A=True)
-                try:
-                    self.repo.index.commit(f"feat: {task['description']}")
-                    self.repo.remotes.origin.push(branch_name)
-                except Exception as e:
-                    logger.error(f"Failed to commit/push: {e}")
-                    return branch_name
-            else:
-                logger.info("No changes detected; still creating empty commit")
-                # Create an empty commit anyway for activity
-                self.repo.git.commit('--allow-empty', '-m', f"feat: {task['description']}")
-                try:
-                    self.repo.remotes.origin.push(branch_name)
-                except Exception as e:
-                    logger.warning(f"Could not push: {e}")
-
-            logger.info(f"Branch {branch_name} created and pushed")
-            return branch_name
-
-        except Exception as e:
-            logger.error(f"Failed to create branch/commit: {e}")
-            return branch_name
-
     def create_pull_request(self, branch_name: str, task: Dict[str, Any]) -> bool:
         """Create a pull request."""
         logger.info(f"Creating PR for branch {branch_name}")
@@ -192,7 +141,6 @@ class Orchestrator:
             return True
 
         try:
-            # Get repo name from GITHUB_REPOSITORY env or default
             repo_name = os.environ.get("GITHUB_REPOSITORY")
             if not repo_name:
                 logger.warning("GITHUB_REPOSITORY not set - cannot create PR")
@@ -200,13 +148,12 @@ class Orchestrator:
 
             repo = self.github.get_repo(repo_name)
 
-            # Check if PR already exists for this branch
+            # Check if PR already exists
             pulls = repo.get_pulls(state='open', head=f"{repo.owner.login}:{branch_name}")
             if pulls.totalCount > 0:
                 logger.info(f"PR already exists for {branch_name}")
                 return True
 
-            # Create PR
             pr = repo.create_pull(
                 title=f"feat: {task['description']}",
                 body=f"Task ID: {task['id']}\n\n{task.get('description', '')}\n\nAutomated by GitHub Actions",
@@ -215,15 +162,10 @@ class Orchestrator:
             )
 
             logger.info(f"PR created: {pr.html_url}")
-            
-            # Note: Auto-merge disabled for GitHub Actions security restrictions
-            # PRs will need to be merged manually or via different workflow
-            
             return True
 
         except RateLimitExceededException:
-            logger.warning("GitHub rate limit exceeded - backing off")
-            time.sleep(60)
+            logger.warning("GitHub rate limit exceeded")
             return False
         except Exception as e:
             logger.error(f"Failed to create PR: {e}")
@@ -232,6 +174,10 @@ class Orchestrator:
     def run_daily_cycle(self) -> None:
         """Main orchestration loop."""
         logger.info("Starting daily automation cycle")
+
+        if not self.repo:
+            logger.error("No git repo available. Aborting.")
+            return
 
         tasks = self.select_tasks_for_today()
         if not tasks:
@@ -242,17 +188,42 @@ class Orchestrator:
             try:
                 logger.info(f"Processing task {task['id']}")
 
-                # Generate changes
+                # 1. Ensure we start from main
+                self.repo.git.checkout('main')
+
+                # 2. Create feature branch
+                branch_name = f"feature/{task['id']}"
+                if branch_name in [h.name for h in self.repo.heads]:
+                    self.repo.git.branch('-D', branch_name)
+
+                self.repo.git.checkout('-b', branch_name)
+
+                # 3. Generate changes on feature branch
                 if not self.generate_changes(task):
                     logger.error(f"Failed to generate changes for {task['id']}")
+                    self.repo.git.checkout('main')
                     continue
 
-                # Git operations
-                branch_name = self.create_branch_and_commit(task)
+                # 4. Commit and push feature branch
+                if self.repo.is_dirty(untracked_files=True):
+                    self.repo.git.add(A=True)
+                    self.repo.index.commit(f"feat: {task['description']}")
+                    try:
+                        self.repo.git.push('origin', branch_name, force=True)
+                    except Exception as e:
+                        logger.error(f"Failed to push branch {branch_name}: {e}")
+                        self.repo.git.checkout('main')
+                        continue
+                else:
+                    logger.info("No changes generated for task")
+                    self.repo.git.checkout('main')
+                    continue
 
-                # GitHub operations
+                # 5. Create PR
                 if self.create_pull_request(branch_name, task):
-                    # Mark as completed
+                    # 6. Switch back to main to update state
+                    self.repo.git.checkout('main')
+
                     completed = self.load_state(self.completed_file)
                     completed.append({
                         **task,
@@ -260,14 +231,20 @@ class Orchestrator:
                         'branch': branch_name
                     })
                     self.save_state(self.completed_file, completed)
-                    logger.info(f"Task {task['id']} completed successfully")
+
+                    # 7. Commit state update on main
+                    self.repo.git.add(str(self.completed_file))
+                    self.repo.index.commit(f"chore: mark task {task['id']} as completed")
+                    logger.info(f"Task {task['id']} marked as completed on main")
                 else:
                     logger.error(f"Failed to create PR for {task['id']}")
+                    self.repo.git.checkout('main')
 
             except Exception as e:
                 logger.error(f"Error processing task {task['id']}: {e}")
+                self.repo.git.checkout('main')
 
-        logger.info("Daily cycle completed")
+        logger.info("Daily cycle completed. Current branch: %s", self.repo.active_branch.name)
 
 def main():
     orchestrator = Orchestrator()
