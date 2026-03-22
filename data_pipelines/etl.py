@@ -84,8 +84,3 @@ def run_etl(input_path: str, output_path: str) -> None:
 if __name__ == "__main__":
     import sys
     run_etl(sys.argv[1], sys.argv[2])
-
-
-
-
-# added transformation 'filter low quantity'
