@@ -134,5 +134,13 @@
     "branch_name": "etl-refactor",
     "completed_at": "2026-03-28T02:12:04.218801",
     "branch": "feature/17"
+  },
+  {
+    "id": "18",
+    "description": "Add CLI to DataGenerator",
+    "type": "java",
+    "branch_name": "java-cli",
+    "completed_at": "2026-03-28T02:12:06.293373",
+    "branch": "feature/18"
   }
 ]
