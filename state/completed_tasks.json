@@ -150,5 +150,13 @@
     "branch_name": "ci-tests",
     "completed_at": "2026-03-29T02:32:34.664536",
     "branch": "feature/19"
+  },
+  {
+    "id": "20",
+    "description": "Add MLflow tracking URI env variable",
+    "type": "mlflow",
+    "branch_name": "mlflow-uri",
+    "completed_at": "2026-03-29T02:32:36.717896",
+    "branch": "feature/20"
   }
 ]
