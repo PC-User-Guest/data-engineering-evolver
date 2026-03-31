@@ -37,3 +37,5 @@ if st.button("Predict"):
 # added new chart placeholder
 
 # added new chart placeholder 15
+
+# added new chart placeholder 875
