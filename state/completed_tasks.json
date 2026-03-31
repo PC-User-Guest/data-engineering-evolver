@@ -198,5 +198,21 @@
     "branch_name": "test-etl-2",
     "completed_at": "2026-03-31T02:29:24.544995",
     "branch": "feature/25"
+  },
+  {
+    "id": "26",
+    "description": "Add health check to Terraform service definitions",
+    "type": "terraform",
+    "branch_name": "terraform-health",
+    "completed_at": "2026-03-31T02:29:26.732246",
+    "branch": "feature/26"
+  },
+  {
+    "id": "27",
+    "description": "Add sample notebook for MLflow",
+    "type": "mlflow",
+    "branch_name": "mlflow-notebook",
+    "completed_at": "2026-03-31T02:29:28.793615",
+    "branch": "feature/27"
   }
 ]
