@@ -206,5 +206,13 @@
     "branch_name": "terraform-health",
     "completed_at": "2026-03-31T02:29:26.732246",
     "branch": "feature/26"
+  },
+  {
+    "id": "27",
+    "description": "Add sample notebook for MLflow",
+    "type": "mlflow",
+    "branch_name": "mlflow-notebook",
+    "completed_at": "2026-03-31T02:29:28.793615",
+    "branch": "feature/27"
   }
 ]
