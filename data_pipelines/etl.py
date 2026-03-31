@@ -86,4 +86,4 @@ if __name__ == "__main__":
     run_etl(sys.argv[1], sys.argv[2])
 
 # added transformation 'filter low quantity'
-# added transformation 'log revenue'
+
