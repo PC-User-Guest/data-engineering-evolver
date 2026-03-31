@@ -190,5 +190,13 @@
     "branch_name": "api-env-validation",
     "completed_at": "2026-03-30T02:34:28.990797",
     "branch": "feature/24"
+  },
+  {
+    "id": "25",
+    "description": "Improve etl unit tests",
+    "type": "testing",
+    "branch_name": "test-etl-2",
+    "completed_at": "2026-03-31T02:29:24.544995",
+    "branch": "feature/25"
   }
 ]
