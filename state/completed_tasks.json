@@ -230,5 +230,13 @@
     "branch_name": "docs-branch-protection",
     "completed_at": "2026-04-01T02:40:25.526225",
     "branch": "feature/29"
+  },
+  {
+    "id": "30",
+    "description": "Add PySpark UDF example to ETL",
+    "type": "pyspark",
+    "branch_name": "etl-udf",
+    "completed_at": "2026-04-01T02:40:27.858765",
+    "branch": "feature/30"
   }
 ]
