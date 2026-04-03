@@ -87,3 +87,5 @@ if __name__ == "__main__":
 
 # added transformation 'filter low quantity'
 
+
+# added transformation 'add discount'
